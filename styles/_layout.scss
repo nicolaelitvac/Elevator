@@ -1,0 +1,29 @@
+.site {
+  display: grid;
+  grid-gap: $grid-gutter-width;
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+
+  &__header {
+    grid-area: header;
+    padding: $spacer 0;
+  }
+  &__main {
+    grid-area: main;
+    padding: $spacer 0;
+  }
+  &__footer {
+    grid-area: footer;
+    padding: $spacer 0;
+    background-color: $gray-200;
+  }
+  &__logo {
+    margin: 0;
+  }
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
