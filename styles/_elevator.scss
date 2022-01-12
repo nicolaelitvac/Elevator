@@ -44,6 +44,8 @@ $floor-gutter-width: var(--elevator-floor-spacing, 30px);
     height: calc(#{$floor-height} - #{$floor-gutter-width});
     background-color: $gray-400;
     border: 1px solid $gray-800;
+    transition: all 1s ease-out;
+    transform: translateZ(0); // GPU acceletaion
 
     &::after {
       position: absolute;
