@@ -1,0 +1,67 @@
+$floor-height: var(--elevator-floor-height, 150px);
+$floor-gutter-width: var(--elevator-floor-spacing, 30px);
+
+
+.elevatorScreen {
+  display: block;
+  width: 100px;
+  padding: calc(#{$floor-gutter-width} *.5);
+  margin: 0 auto $spacer;
+  text-align: center;
+  border: 1px solid $gray-500;
+}
+.elevator {
+  position: relative;
+  display: block;
+  width: 320px;
+  max-width: 100%;
+  padding: calc(#{$floor-gutter-width} *.5);
+  margin: 0 auto;
+  border: 1px solid $gray-500;
+
+  &__floor {
+    display: flex;
+    align-items: center;
+    height: $floor-height;
+    padding: (calc(#{$floor-gutter-width} *.5)) 50% (calc(#{$floor-gutter-width} *.5)) (calc(#{$floor-gutter-width} *.5));
+    border: 1px solid $gray-400;
+  }
+  &__shaft {
+    position: absolute;
+    top: calc(#{$floor-gutter-width} *.5);
+    right: calc(#{$floor-gutter-width} *.5);
+    bottom: calc(#{$floor-gutter-width} *.5);
+    left: 50%;
+    z-index: 2;
+    padding: (calc(#{$floor-gutter-width} *.5));
+    border: 1px solid $gray-500;
+    background-color: $gray-100;
+  }
+  &__car {
+    position: absolute;
+    left: (calc(#{$floor-gutter-width} *.5));
+    right: (calc(#{$floor-gutter-width} *.5));
+    height: calc(#{$floor-height} - #{$floor-gutter-width});
+    background-color: $gray-400;
+    border: 1px solid $gray-800;
+
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 49.5%;
+      bottom: 0;
+      left: 49.5%;
+      z-index: 2;
+      background-color: $gray-800;
+      content: '';
+      transition: all .2s ease-out;
+    }
+
+    &--open {
+      &::after {
+        left: (calc(#{$floor-gutter-width} *.5));
+        right: (calc(#{$floor-gutter-width} *.5));
+      }
+    }
+  }
+}

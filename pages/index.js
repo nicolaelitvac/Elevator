@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Layout from '../components/layout'
 import Container from '../components/container'
+import Elevator from '../components/elevator/elevator'
 
 export default function Home() {
   return (
@@ -10,9 +11,7 @@ export default function Home() {
       </Head>
 
       <Container>
-        <h1 className="title">
-          Welcome to The Elevator
-        </h1>
+        <Elevator floors="5" />
       </Container>
     </Layout>
   )
