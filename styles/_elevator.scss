@@ -1,6 +1,6 @@
 $floor-height: var(--elevator-floor-height, 150px);
 $floor-gutter-width: var(--elevator-floor-spacing, 30px);
-
+$elevator-button-size: 1.3rem;
 
 .elevatorScreen {
   display: block;
@@ -59,10 +59,33 @@ $floor-gutter-width: var(--elevator-floor-spacing, 30px);
       transition: all .2s ease-out;
     }
 
+    &__actions {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      width: $elevator-button-size;
+    }
+
+    &__btns {
+      display: block;
+      width: $elevator-button-size;
+      height: $elevator-button-size;
+      line-height: $elevator-button-size;
+      margin: 0 0 .1rem;
+      padding: 0;
+      font-size: $font-size-sm;
+      text-align: center;
+      border-radius: 50%;
+    }
+
     &--open {
       &::after {
-        left: (calc(#{$floor-gutter-width} *.5));
-        right: (calc(#{$floor-gutter-width} *.5));
+        left: calc(#{$floor-gutter-width} *.5 + #{$elevator-button-size});
+        right: calc(#{$floor-gutter-width} *.5 + #{$elevator-button-size});
       }
     }
   }

@@ -3,6 +3,11 @@ import ElevatorFloor from "./elevator-floor"
 import ElevatorShaft from "./elevator-shaft"
 import ElevatorCar from "./elevator-car"
 
+const Directions = {
+  DOWN: 'down',
+  UP: 'up'
+}
+
 export default class Elevator extends React.Component {
   constructor(props) {
     super(props);
@@ -13,7 +18,58 @@ export default class Elevator extends React.Component {
       currentFloor: 0,
       floorSpacing: 15,
       elevatorCarOpen: false,
+      isMoving: false,
+      delay: 4000,
+      queue: [],
+      pendingPromise: false,
+      workingOnPromise: false
     };
+  }
+
+  enqueue(promise, floorTarget) {
+    return new Promise((resolve, reject) => {
+      const newQueue = [...this.state.queue, {
+        promise,
+        resolve,
+        reject,
+        floorTarget: floorTarget || 0
+      }]
+      .sort((a, b) => a.floorTarget - b.floorTarget)
+
+      this.setState({queue: newQueue});
+      // Re-run
+      this.dequeue();
+    });
+  }
+
+  dequeue() {
+    if (this.state.workingOnPromise) {
+      return false;
+    }
+    const item = this.state.queue.shift();
+    if (!item) {
+      return false;
+    }
+    try {
+      this.setState({workingOnPromise: true});
+      item.promise()
+        .then((value) => {
+          this.setState({workingOnPromise: false});
+          item.resolve(value);
+          this.dequeue();
+        })
+        .catch(err => {
+          this.setState({workingOnPromise: false});
+          item.reject(err);
+          this.dequeue();
+        })
+    } catch (err) {
+      this.setState({workingOnPromise: false});
+      item.reject(err);
+      this.dequeue();
+    }
+
+    return true;
   }
 
   createFloorsArray(totalFloors) {
@@ -24,24 +80,42 @@ export default class Elevator extends React.Component {
     return array.reverse()
   }
 
-  moveUp(){
-    if (this.state.currentFloor < this.state.floors.length - 1) {
-      this.setState({currentFloor: this.state.currentFloor + 1})
-    }
+  async moveUp(fromFloorNr){
+    const dir = Directions.UP
+    const msDelay = this.state.workingOnPromise ? this.state.delay : 1000;
+    const nextFloor = await new Promise(r => setTimeout(() => r(fromFloorNr), msDelay));
+
+    console.log(nextFloor, dir);
+    this.setState({ currentFloor: nextFloor });
   }
-  moveDown() {
-    if (this.state.currentFloor > 0) {
-      this.setState({currentFloor: this.state.currentFloor - 1})
-    }
+
+  async moveDown(fromFloorNr) {
+    const dir = Directions.DOWN
+    const msDelay = this.state.workingOnPromise ? this.state.delay : 1000;
+    const nextFloor = await new Promise(r => setTimeout(() => r(fromFloorNr), msDelay));
+
+    console.log(nextFloor, dir);
+    this.setState({ currentFloor: nextFloor });
   }
+
+  async moveToFloor(floorNr) {
+    const dir = this.state.currentFloor < floorNr ? Directions.UP : Directions.DOWN
+    const msDelay = this.state.workingOnPromise ? this.state.delay : 500;
+    const nextFloor = await new Promise(r => setTimeout(() => r(floorNr), msDelay));
+    console.log(nextFloor, dir);
+    this.setState({ currentFloor: nextFloor });
+  }
+
   handleFloorUp(floorNr) {
-    console.log(`Up from ${floorNr}`);
-    this.moveUp();
+    this.enqueue(() => this.moveUp(floorNr, this.state.delay), floorNr);
   }
 
   handleFloorDown(floorNr) {
-    console.log(`Down from ${floorNr}`);
-    this.moveDown();
+    this.enqueue(() => this.moveDown(floorNr, this.state.delay), floorNr);
+  }
+
+  handleFloorButton(floorNr) {
+    this.enqueue(() => this.moveToFloor(floorNr, this.state.delay), floorNr);
   }
 
   render() {
@@ -53,7 +127,13 @@ export default class Elevator extends React.Component {
           <ElevatorFloor floor={floor} totalFloors={floors.length} key={index} onClickUp={() => this.handleFloorUp(floor.number)} onClickDown={() => this.handleFloorDown(floor.number)} />
         ))}
         <ElevatorShaft floors={floors.length} currentFloor={currentFloor}>
-          <ElevatorCar currentFloor={currentFloor} open={elevatorCarOpen} style={{bottom: (currentFloor * floorHeight) + floorSpacing / 2}} />
+          <ElevatorCar
+            floors={floors}
+            currentFloor={currentFloor}
+            open={elevatorCarOpen}
+            style={{bottom: (currentFloor * floorHeight) + floorSpacing / 2}}
+            onClickFloorButton={(floorNr) => this.handleFloorButton(floorNr)}
+          />
         </ElevatorShaft>
       </div>
       <style jsx global>{`

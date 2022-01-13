@@ -11,7 +11,7 @@ export default function Home() {
       </Head>
 
       <Container>
-        <Elevator floors="5" />
+        <Elevator floors="6" />
       </Container>
     </Layout>
   )
