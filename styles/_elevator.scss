@@ -3,12 +3,9 @@ $floor-gutter-width: var(--elevator-floor-spacing, 30px);
 $elevator-button-size: 1.3rem;
 
 .elevatorScreen {
-  display: block;
   width: 100px;
-  padding: calc(#{$floor-gutter-width} *.5);
   margin: 0 auto $spacer;
   text-align: center;
-  border: 1px solid $gray-500;
 }
 .elevator {
   position: relative;
@@ -20,11 +17,28 @@ $elevator-button-size: 1.3rem;
   border: 1px solid $gray-500;
 
   &__floor {
+    position: relative;
     display: flex;
     align-items: center;
     height: $floor-height;
     padding: (calc(#{$floor-gutter-width} *.5)) 50% (calc(#{$floor-gutter-width} *.5)) (calc(#{$floor-gutter-width} *.5));
     border: 1px solid $gray-400;
+
+    &__number {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      color: $white;
+      background-color: $gray-700;
+      border-radius: 50%;
+      text-align: center;
+      transition: $btn-transition;
+
+      &--current {
+        background-color: $yellow;
+        color: $white;
+      }
+    }
   }
   &__shaft {
     position: absolute;
